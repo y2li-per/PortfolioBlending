@@ -21,29 +21,30 @@ w2 = weightMV(1:end,randNum2); % weight No.2
 % w2 = w2/s2; % scaling 0_1
 %*******************************************weight>0
 it = 100; % iteration time
+uStep = 0.01; % blending coefficient step
 r1 = ones(1,it); % result No.1 
                 % define dim
 r2 = ones(1,it); % result No.2
                 % define dim
-r = ones(1,it); % blending result
+r = ones(1/uStep + 1,it); % blending result
                % define dim
+
 for i = 1:it
-    rawData = rand(1, t+1);
+    rawData = rand(1,t+1);
     data = rawData(1,2:t+1)./rawData(1,1:t);
-    for u = 0:0.01:1% blending coefficient
+    r1(1,i) = data*w1;
+    r2(1,i) = data*w2;
+    for u = 0:uStep:1% blending coefficient
         w = u*w1 + (1-u)*w2;% blending weight
-        r1(1,i) = data*w1;
-        r2(1,i) = data*w2;
-        r(1,i) = data*w;
-       %% graph
-        plot(r(1,it),'y');
-        hold on;
-        plot(r2(1,it),'r');
-        hold on;
-        plot(r1(1,it),'k');
-        title('Simulation Result','fontsize',12);
-        xlabel('Dimension','fontsize',12);
-        ylabel('result','fontsize',12);
-        legend('r','r2','r1');
+        r(int8(u/0.01 + 1),i) = data*w;
     end
 end
+%% graph
+plot(r.','y');
+hold on;
+plot(r2,'r');
+hold on;
+plot(r1,'k');
+title('Simulation Result','fontsize',12);
+xlabel('Iteration Time','fontsize',12);
+ylabel('result','fontsize',12);
